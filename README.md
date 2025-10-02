@@ -1,106 +1,75 @@
-README
-Acest proiect reprezintă o aplicație Java care gestionează operațiuni bancare. Este organizat pe mai multe fișiere și clase, fiecare având
-o funcționalitate specifică. În această documentație, sunt prezentate principalele componente ale proiectului și modul în care acestea interacționează.
+This project is a Java application that manages banking operations. It is organized into multiple files and classes, each with a specific functionality. Below is a detailed description of the main components and how they interact.
 
-Structura proiectului
-1. Pachetul org.poo.PrimaryClasses
-Acest pachet conține clasele de bază necesare pentru reprezentarea entităților principale ale aplicației:
-
-Bank: reprezintă banca și gestionează utilizatorii, conturile și comenzile.
-User: clasa utilizatorilor băncii, conținând informații precum emailul și conturile asociate.
-Account: reprezintă un cont bancar cu proprietăți precum soldul, tipul contului și funcționalități suplimentare.
-Transaction: gestionează operațiuni și rapoarte financiare legate de conturi și utilizatori.
-2. Pachetul org.poo.ProcessClass
-Acest pachet include clase care implementează comenzile și procesele logice:
-
-ProcessCom: clasa principală care gestionează execuția comenzilor. Utilizează metode din alte clase pentru a procesa cererile și a genera răspunsuri.
-Cum funcționează aplicația?
-1. Procesarea comenzilor
-Clasa ProcessCom conține metoda principală, CurrentCommand, care parcurge lista de comenzi (bank.getCommands()) și execută fiecare dintre ele. Comenzile sunt definite printr-o proprietate command și sunt procesate folosind un switch-case pentru a identifica tipul comenzii.
-
-Exemple de comenzi:
-
-printUsers: Afișează utilizatorii existenți.
-addAccount: Adaugă un cont nou.
-createCard: Creează un card nou.
-deleteAccount: Șterge un cont bancar.
-spendingsReport: Generează un raport de cheltuieli pentru un anumit cont.
-2. Implementarea comenzilor
-Fiecare comandă este implementată de o clasă specifică, precum:
-
-CreateAccount, CreateCard pentru operațiuni de creare.
-AddFunds, PayOnline, SplitPayment pentru gestionarea fondurilor și plăților.
-ChangeInterest, AddInterest pentru administrarea dobânzilor.
-Unele comenzi adaugă date în nodul JSON output, utilizând clase din biblioteca Jackson pentru serializarea obiectelor.
-
-Cum se adaugă o comandă nouă?
-Creează o clasă nouă pentru implementarea comenzii, implementând o metodă excute(Bank bank, Command command).
-Adaugă logica specifică pentru execuția comenzii în această clasă.
-Actualizează clasa ProcessCom:
-Adaugă un nou case în metoda CurrentCommand.
-Asociază-l cu clasa creată la pasul anterior.
-Exemplu de utilizare
-Un utilizator trimite o listă de comenzi către bancă sub formă de obiect JSON.
-Clasa Bank încarcă comenzile în memorie.
-Clasa ProcessCom procesează comenzile și generează răspunsuri în format JSON.
-Răspunsurile sunt adăugate în nodul output.
-Biblioteci utilizate
-Jackson: pentru manipularea JSON-ului (crearea și modificarea nodurilor JSON).
-Java Collections: pentru gestionarea utilizatorilor și comenzilor.
-Cerinte preliminare
-Java Development Kit (JDK) 11+.
-Dependințe Maven pentru Jackson (com.fasterxml.jackson.core).
-Detalii despre implementare
-Interfața Process
-Interfața Process definește metoda generală excute(Bank bank, Command command), care este implementată de fiecare clasă pentru a executa comenzile asociate. Aceasta asigură un contract uniform pentru toate tipurile de procese din cadrul aplicației.
-
-Clasele implementate
-Mai jos sunt detaliate clasele care implementează interfața Process:
-
+Project Structure
+1. Package org.poo.PrimaryClasses
+This package contains the core classes representing the main entities of the application:
+Bank: Represents the bank and manages users, accounts, and commands.
+User: Represents a bank user, storing information such as email and associated accounts.
+Account: Represents a bank account with properties like balance, account type, and additional functionalities.
+Transaction: Handles account operations and financial reporting for users.
+2. Package org.poo.ProcessClass
+This package contains classes that implement commands and logical processes:
+ProcessCom: The main class responsible for executing commands. It uses methods from other classes to process requests and generate responses.
+How the Application Works
+1. Command Processing
+ProcessCom contains the main method, CurrentCommand, which iterates through the list of commands (bank.getCommands()) and executes each one. Commands are identified using a command property and processed through a switch-case statement.
+Example Commands:
+printUsers: Displays existing users.
+addAccount: Adds a new account.
+createCard: Creates a new card.
+deleteAccount: Deletes a bank account.
+spendingsReport: Generates a spending report for a specific account.
+2. Command Implementation
+Each command is implemented in a specific class:
+CreateAccount, CreateCard → for creating accounts and cards.
+AddFunds, PayOnline, SplitPayment → for managing funds and payments.
+ChangeInterest, AddInterest → for interest management.
+Some commands update the JSON output node using Jackson classes for object serialization.
+Adding a New Command
+Create a new class implementing the method execute(Bank bank, Command command).
+Add the logic for executing the command in this class.
+Update ProcessCom:
+Add a new case in the CurrentCommand method.
+Associate it with the new class created in step 1.
+Example Usage
+A user sends a list of commands to the bank in JSON format.
+The Bank class loads the commands into memory.
+ProcessCom processes the commands and generates JSON responses.
+Responses are added to the output node.
+Libraries Used
+Jackson: for JSON manipulation (creating and updating JSON nodes).
+Java Collections: for managing users and commands.
+Prerequisites
+Java Development Kit (JDK) 11 or higher.
+Maven dependencies for Jackson (com.fasterxml.jackson.core).
+Implementation Details
+Interface Process
+The Process interface defines the general method execute(Bank bank, Command command), which is implemented by each class to execute associated commands. This ensures a uniform contract for all processes within the application.
+Key Classes Implementing Process
 CreateAccount
-Această clasă gestionează crearea unui cont nou pentru un utilizator:
-
-Metode principale:
-excute(Bank bank, Command command): Creează un cont de tip economii (SavingsAccount) sau clasic (ClassicAccount) în funcție de comandă.
-addTransaction(ArrayNode tran, Command command): Adaugă un nod în jurnalul tranzacțiilor, specificând că un cont a fost creat.
-addReport(ArrayNode tran, Command command, Bank bank): Generează un raport pentru contul nou creat.
+Handles the creation of new accounts:
+execute(Bank bank, Command command): Creates either a SavingsAccount or ClassicAccount depending on the command.
+addTransaction(ArrayNode tran, Command command): Adds a transaction log entry for account creation.
+addReport(ArrayNode tran, Command command, Bank bank): Generates a report for the new account.
 AddFunds
-Clasa AddFunds permite adăugarea de fonduri într-un cont:
-
-Metoda principală:
-excute(Bank bank, Command command): Găsește contul asociat unui utilizator utilizând IBAN-ul și adaugă suma specificată.
+Adds funds to an account:
+execute(Bank bank, Command command): Finds the account by IBAN and adds the specified amount.
 CreateCard
-Această clasă gestionează crearea unui card bancar clasic:
-
-Metode principale:
-excute(Bank bank, Command command): Creează un card asociat unui cont existent, atribuie un număr de card generat, și adaugă cardul în cont.
-addTransaction(ArrayNode tran, Command command): Adaugă informații despre cardul nou în jurnalul tranzacțiilor.
-addReport(ArrayNode tran, Command command, Bank bank, Account account, Card card, User user): Generează un raport cu detalii despre cardul creat.
+Manages the creation of classic bank cards:
+execute(Bank bank, Command command): Creates a card linked to an existing account, generates a card number, and adds it to the account.
+addTransaction(ArrayNode tran, Command command): Adds a transaction log entry.
+addReport(ArrayNode tran, Command command, Bank bank, Account account, Card card, User user): Generates a detailed card creation report.
 CreateOneTimeCard
-Clasa CreateOneTimeCard creează carduri de unică folosință:
-
-Similarități cu CreateCard:
-Aceleași metode principale.
-Diferențe:
-Creează obiecte de tip OneTimeCard în loc de NormalCard.
+Creates one-time-use cards (similar to CreateCard) but generates OneTimeCard objects instead of normal cards.
 DeleteCard
-Clasa DeleteCard se ocupă cu ștergerea unui card:
-
-Metoda principală:
-excute(Bank bank, Command command): Găsește cardul asociat IBAN-ului și îl elimină din lista de carduri ale contului. Creează o intrare în jurnal pentru a înregistra ștergerea.
+Handles card deletion:
+execute(Bank bank, Command command): Finds the card by IBAN and removes it from the account, creating a transaction log entry.
 DeleteAccount
-Clasa DeleteAccount gestionează ștergerea unui cont bancar:
-
-Metode principale:
-excute(Bank bank, Command command): Verifică dacă soldul contului este zero înainte de a-l șterge. Dacă există fonduri, adaugă o tranzacție care specifică eșecul operațiunii.
-addTransaction(ArrayNode tran, Command command, Bank bank): Adaugă un mesaj detaliat despre motivul eșecului (ex. "Fonduri rămase în cont").
-printMessage(Command command, ArrayNode output): Generează un răspuns JSON pentru a raporta succesul sau eșecul ștergerii contului.
-Detalii tehnice și funcționalități
-Generarea IBAN-urilor și numerelor de carduri:
-
-Utilizată clasa Utils pentru generarea automată a IBAN-urilor și numerelor de carduri.
-Jurnalizare și rapoarte:
-
-Fiecare operațiune adaugă intrări în jurnalul tranzacțiilor utilizatorului sau în rapoartele contului.
-Tratarea erorilor:
-
+Manages account deletion:
+execute(Bank bank, Command command): Ensures the account balance is zero before deletion; logs failure if funds remain.
+addTransaction(ArrayNode tran, Command command, Bank bank): Adds detailed messages for failed deletions.
+printMessage(Command command, ArrayNode output): Generates a JSON response indicating success or failure.
+Technical Details & Features
+IBAN and Card Number Generation: Uses the Utils class for automatic generation.
+Logging and Reports: Every operation adds entries to the user’s transaction log or account reports.
+Error Handling: Commands validate actions and provide detailed feedback in JSON.
